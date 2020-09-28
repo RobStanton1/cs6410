@@ -1,0 +1,1231 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+\noindent
+CS6410 Assignment 3
+\end_layout
+
+\begin_layout Author
+\noindent
+Robert Stanton 113542767
+\end_layout
+
+\begin_layout Standard
+\noindent
+This report outlines the operation of a random number generator (RNG) developed
+ for CS6410.
+ The RNG presented in this report can sample numbers from both the Logarithmic
+ and Kumaraswamy distributions.
+ The report is presented in two sections.
+ Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Distribution-Information"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ contains information on the distributions available to the RNG, and the
+ different sampling methods used.
+ Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Usage-Guide"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, the usage guide, contains information on the prerequisite libraries/packages
+ needed, and instructions for generating random variates.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\noindent
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Distribution-Information"
+
+\end_inset
+
+Distribution Information
+\end_layout
+
+\begin_layout Subsection*
+\noindent
+Logarithmic Distribution
+\end_layout
+
+\begin_layout Standard
+\noindent
+The Logarithmic distribution is a discrete probability distribution of one
+ parameter, 
+\begin_inset Formula $p$
+\end_inset
+
+; such that 
+\begin_inset Formula $0<p<1$
+\end_inset
+
+.
+ The probability mass function (PMF) is given as: 
+\begin_inset Formula 
+\[
+f(k)=\frac{-1}{\ln(1-p)}\frac{p^{k}}{k}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+The cumulative distribution function (CDF) is given as:
+\begin_inset Formula 
+\[
+F(k)=1+\frac{\mathrm{B}(p;k+1,0)}{\ln(1-p)}
+\]
+
+\end_inset
+
+Where 
+\begin_inset Formula $\mathrm{\mathit{B}}$
+\end_inset
+
+ is the incomplete beta function.
+ 
+\end_layout
+
+\begin_layout Standard
+\noindent
+The CDF of the Logarithmic distribution can alternatively represented as:
+ 
+\begin_inset Formula 
+\[
+F(k)=\mathop{\sum_{k_{i}\leq k}f(k_{i})}
+\]
+
+\end_inset
+
+Which is the sum of the PMF, 
+\begin_inset Formula $f(k_{i}),$
+\end_inset
+
+ for each 
+\begin_inset Formula $k_{i}$
+\end_inset
+
+ up to, and including, the 
+\begin_inset Formula $k$
+\end_inset
+
+ of interest.
+ This is method by which the CDF is calculated in this tool.
+\end_layout
+
+\begin_layout Standard
+\noindent
+Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:log_pmf"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows the PMF of the Logarithmic distribution and Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:log_cdf"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows its CDF.
+ As a discrete distribution, the PMF and CDF are only defined at the integer
+ values 
+\begin_inset Formula $k\in\{1,2,3,...\}$
+\end_inset
+
+; the lines shown in both Figures do not imply continuity.
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename log_pmf.pdf
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:log_pmf"
+
+\end_inset
+
+The probability mass function of the Logarithmic distribution.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename log_cdf.pdf
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:log_cdf"
+
+\end_inset
+
+The cumulative distribution function of the Logarithmic distribution.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+The method used to sample pseudo-random numbers from the Logarithmic distributio
+n is as follows: first, a set of intervals, 
+\begin_inset Formula $S=\{[F(0),F(1)),\:[(F(1),F(2)),...,[F(k-1),F(k))\}$
+\end_inset
+
+, and a random uniform variate, 
+\begin_inset Formula $u$
+\end_inset
+
+, between [0, 1], are generated.
+ The index of the interval in 
+\begin_inset Formula $S$
+\end_inset
+
+, in which 
+\begin_inset Formula $u$
+\end_inset
+
+ lies, is the Logarithmic distributed random variate returned by the RNG.
+ 
+\end_layout
+
+\begin_layout Subsection*
+\noindent
+Kumaraswamy Distribution
+\end_layout
+
+\begin_layout Standard
+\noindent
+The Kumaraswamy distribution is a continuous probability distribution.
+ The probability density function (PDF) and CDF of the Kumaraswamy distribution
+ can be represented in closed form.
+ The distribution takes two parameters, 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ and 
+\begin_inset Formula $\beta$
+\end_inset
+
+, such that: 
+\begin_inset Formula $\alpha>0$
+\end_inset
+
+, and 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $b>0$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+.
+ The PDF of the Kumaraswamy distribution is: 
+\begin_inset Formula 
+\[
+f(x)=\alpha\beta x^{\alpha-1}(1-x^{a})^{\beta-1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+The CDF of the Kumaraswamy distribution is:
+\begin_inset Formula 
+\[
+F(x)=1-(1-x^{\alpha})^{\beta}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+Figures 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:kum_pdf"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:kum_cdf"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ show the PDF and CDF of the Kumaraswamy distribution.
+ The values of 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ and 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\beta$
+\end_inset
+
+ for which the PDF and CDF have been calculated are also shown.
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename kum_pdf.pdf
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:kum_pdf"
+
+\end_inset
+
+The probability density function of the Kumaraswamy distribution
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename kum_cdf.pdf
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:kum_cdf"
+
+\end_inset
+
+The cumulative distribution function of the Kumaraswamy distribution
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+As the Kumaraswamy distribution is continuous (and has an invertible CDF),
+ the RNG uses inverse transform sampling to generate the desired random
+ variates.
+ Necessary for this method of pseudo-random number sampling is the quantile
+ function, or inverse CDF.
+ The quantile function of the Kumaraswamy distribution is:
+\begin_inset Formula 
+\[
+F^{-1}(x)=\sqrt[\alpha]{1-\sqrt[\beta]{1-x}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+To sample Kumaraswamy distributed random variates by inverse transform sampling:
+ first, a random uniform variate, 
+\begin_inset Formula $u$
+\end_inset
+
+, from the interval [0, 1], is generated.
+ Then, 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $K=F^{-1}(u)$
+\end_inset
+
+ is calculated.
+ 
+\begin_inset Formula $K$
+\end_inset
+
+ is the result of the random uniform variate, 
+\begin_inset Formula $u$
+\end_inset
+
+, being passed as an argument to the inverse CDF, 
+\begin_inset Formula $F^{-1}$
+\end_inset
+
+.
+ 
+\begin_inset Formula $K$
+\end_inset
+
+ can be shown to be Kumaraswamy distributed with the parameters 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ and 
+\begin_inset Formula $\beta$
+\end_inset
+
+ as specified in 
+\begin_inset Formula $F^{-1}(u)$
+\end_inset
+
+ .
+\end_layout
+
+\begin_layout Section
+\noindent
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Usage-Guide"
+
+\end_inset
+
+Usage Guide
+\end_layout
+
+\begin_layout Subsection*
+\noindent
+Prerequisites
+\end_layout
+
+\begin_layout Standard
+\noindent
+Several packages from the SciPy 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "oliphant2007python,millman2011python"
+literal "false"
+
+\end_inset
+
+ library are necessary to for the RNG to function correctly.
+ These are:
+\end_layout
+
+\begin_layout Itemize
+\noindent
+Matplotlib 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "hunter2007matplotlib"
+literal "false"
+
+\end_inset
+
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\noindent
+Provides the core graphical functionality of the RNG.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\noindent
+Numpy 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "oliphant2006guide,walt2011numpy"
+literal "false"
+
+\end_inset
+
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\noindent
+Necessary for the correct functionality of Matplotlib.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+\noindent
+All necessary packages, and detailed instructions on their installation,
+ can be found on the SciPy website 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "SciPy"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection*
+\noindent
+Instructions
+\end_layout
+
+\begin_layout Subsection*
+Inputs
+\end_layout
+
+\begin_layout Standard
+\noindent
+The RNG is operated from the command line.
+ Using a command-line interface, navigate to the folder containing the RNG.
+ It is recommend to store the RNG in a folder of it's own as it generated
+ several output files.
+ The RNG has the following signature that must be adhered to when called:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+n seed dist par1 [par2]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\noindent
+int n
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\noindent
+The number of random variates to generate.
+ 
+\emph on
+n
+\emph default
+ should be a positive integer; however the RNG will accept 0 as a valid
+ input.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\noindent
+int seed
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\noindent
+The seed value used to initialise the inbuilt pseudo-random, uniform, number
+ generator.
+ Setting a seed value ensures that the random sequence generated by the
+ tool is reproductible.
+ 
+\emph on
+seed
+\emph default
+ should be an integer.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\noindent
+str dist
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\noindent
+The desired distribution from which to generate random variates.
+ 
+\emph on
+dist
+\emph default
+ takes the case-insensitive string '
+\emph on
+LOG
+\emph default
+' or '
+\emph on
+KUM
+\emph default
+' as input; which refer to the Logarithmic or Kumaraswamy distributions
+ respectively.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\noindent
+float par1
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\noindent
+The meaning of 
+\emph on
+par1
+\emph default
+ is dependent on the chosen distribution.
+ In the Logarithmic case, 
+\emph on
+par1
+\emph default
+ refers to the parameter 
+\begin_inset Formula $p$
+\end_inset
+
+.
+ For the Kumaraswamy distribution
+\emph on
+, par1
+\emph default
+ refers to 
+\begin_inset Formula $\alpha$
+\end_inset
+
+.
+ In both cases, 
+\emph on
+par1
+\emph default
+ should obey the parameter constraints of the respective distribution; 
+\begin_inset Formula $0<p<1$
+\end_inset
+
+ or 
+\begin_inset Formula $\alpha>0$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\noindent
+float par2
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\noindent
+Refers the parameter 
+\begin_inset Formula $\beta$
+\end_inset
+
+ of the Kumaraswamy distribution.
+ Should 
+\emph on
+par2
+\emph default
+ be given as an argument to the Logarithmic distribution, it will be ignored.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+\noindent
+An example of a correctly formulated script call is as follows:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+python myRng.py 1000 5 LOG 0.66
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+This code generates 1000 Logarithmic distributed random variates with parameter
+ 
+\begin_inset Formula $p=0.66$
+\end_inset
+
+, and a seed value of 
+\begin_inset Formula $5$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection*
+\noindent
+Outputs
+\end_layout
+
+\begin_layout Standard
+\noindent
+The script generates three output files, which can be found in the same
+ folder as the RNG:
+\end_layout
+
+\begin_layout Itemize
+\noindent
+seq_.txt
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\noindent
+This file contains the 
+\emph on
+n
+\emph default
+ random variates generated by the RNG.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\noindent
+cdfData_.txt
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\noindent
+Contains ordered tuples in the form 
+\begin_inset Formula $(x,\:F(x))$
+\end_inset
+
+, where 
+\begin_inset Formula $F(x)$
+\end_inset
+
+ is the CDF of the distribution specified in 
+\emph on
+dist
+\emph default
+.
+ There are a significantly different number of tuples generated depending
+ on the distribution chosen.
+ In the Logarithmic case, six tuples, representing 
+\begin_inset Formula $(k,\:F(k))$
+\end_inset
+
+ for 
+\begin_inset Formula $k\in\{1,2,...,6\}$
+\end_inset
+
+, are presented.
+ This reflects the discrete nature of the Logarithmic distribution that
+ is only defined at integer values 
+\begin_inset Formula $k>0$
+\end_inset
+
+.
+ The CDF of the Kumaraswamy distribution is evaluated for 1000 floating
+ point values on the interval [0, 1].
+ This level of accuracy should be sufficient for most statistical purposes.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\noindent
+cdf_.pdf
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\noindent
+Contains a plot of the empirical and theoretical CDFs of the chosen distribution.
+ The empirical CDF is derived from the variates generated by the RNG.
+ Increasing the size of 
+\emph on
+n
+\emph default
+ typically results in the empirical curve aligning closer to the theoretical.
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:empirical_log_cdf"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows an example of a CDF plot generated by the script.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+\noindent
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename 1000_5_LOG_0.66_cdf_.pdf
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:empirical_log_cdf"
+
+\end_inset
+
+An example of the empirical and theoretical CDFs produced by the script.
+ The arguments used to generate this CDF can be seen in the figurehead.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:empirical_kum_cdf"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows the CDF of Kumaraswamy distribution with the parameters 
+\begin_inset Formula $\alpha=5$
+\end_inset
+
+ and 
+\begin_inset Formula $\beta=1$
+\end_inset
+
+.
+ The empirical CDF is shown as the grey shaded area, while the theoretical
+ CDF is given by the dashed black line.
+ The parameters of this distribution can be seen in the title of the plot.
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename 1000_5_KUM_5_1_cdf_.pdf
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:empirical_kum_cdf"
+
+\end_inset
+
+The Kumaraswamy distribution for the given parameters.
+ The relatively large 
+\emph on
+n
+\emph default
+ gives better convergence between the empirical and theoretical curves.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:kum_cdf_small_n"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows the CDF of the Kumaraswamy distribution distribution where 
+\emph on
+
+\begin_inset Formula $n=100$
+\end_inset
+
+.
+ 
+\emph default
+As can be seen, smaller values of 
+\emph on
+n
+\emph default
+ can lead to large differences in the empirical and theoretical CDFs.
+ Increasing the size of 
+\emph on
+n
+\emph default
+ typically leads to better convergence of both curves.
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename 100_5_KUM_2_5_cdf_.pdf
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:kum_cdf_small_n"
+
+\end_inset
+
+ As can be seen here, generating a smaller number of random variates results
+ in greater residuals between the expected and observed distributions.
+ From a scientific point of view, it is necessary to generate and experiment
+ with large amounts of random data to ensure that random inputs truly reflect
+ the distribution from which they are drawn.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+btprint "btPrintCited"
+bibfiles "bibliography"
+options "plain"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
